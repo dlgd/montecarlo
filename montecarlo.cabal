@@ -1,13 +1,8 @@
 name:                montecarlo
 version:             0.1.0.0
-synopsis:            Initial project template from stack
-description:         Please see README.md
-homepage:            http://github.com/dlgd/montecarlo#readme
+homepage:            http://github.com/dlgd/montecarlo
 license:             BSD3
-license-file:        LICENSE
-author:              Daniel Gazard
-maintainer:          daniel.gazard@gmail.com
-copyright:           Copyright: (c) 2015 Daniel Gazard
+author:              dlgd
 category:            Web
 build-type:          Simple
 -- extra-source-files:
