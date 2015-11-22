@@ -15,6 +15,8 @@ library
   build-depends:       base >= 4.7 && < 5
                      , normaldistribution
                      , parallel
+                     , random
+                     , mtl
   default-language:    Haskell2010
 
 executable montecarlo-exe
@@ -23,6 +25,9 @@ executable montecarlo-exe
   ghc-options:         -threaded -rtsopts -eventlog
   build-depends:       base
                      , montecarlo
+                     , random
+                     , average
+-- rm ramdom
   default-language:    Haskell2010
 
 test-suite montecarlo-test
