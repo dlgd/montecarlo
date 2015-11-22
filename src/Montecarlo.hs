@@ -12,6 +12,7 @@ import Control.Parallel.Strategies
 import System.Random
 import Control.Monad.State
 import Control.Monad
+import Data.Monoid
 
 montecarlo' :: Double -> Double -> Double ->
                Double -> (Double -> Double) -> Int -> Int -> Double
@@ -46,14 +47,14 @@ foo = do
 
 type Montecarlo g a = State g a
 
-evalMontecarlo :: RandomGen g => Int -> Montecarlo g a -> ([a] -> b) -> g -> b
-evalMontecarlo n mc reducer g = reducer $ evalState (replicateM n mc) g
+evalMontecarlo :: (RandomGen g, Monoid a) => Int -> Montecarlo g a -> g -> a
+evalMontecarlo n mc g = mconcat $ evalState (replicateM n mc) g
 
-evalMontecarloPar :: RandomGen g => Int -> Int -> Montecarlo g a ->
-                     ([a] -> a) -> g -> a
-evalMontecarloPar n c mc reducer g = reducer mcs
+evalMontecarloPar :: (RandomGen g, Monoid a) => Int -> Int -> Montecarlo g a ->
+                     g -> a
+evalMontecarloPar n c mc g = mconcat mcs
     where gs = take n (map snd (iterate (next . snd) (0, g)))
-          mcs = map (evalMontecarlo c mc reducer) gs `using` parList rseq
+          mcs = map (evalMontecarlo c mc) gs `using` parList rseq
 
 liftMontecarlo :: RandomGen g => (g -> (a, g)) -> Montecarlo g a
 liftMontecarlo = state
