@@ -1,49 +1,20 @@
 module Montecarlo
     (
-      montecarlo
-    , Montecarlo
+ -- * Montecarlo simulation
+     Montecarlo
     , evalMontecarlo
     , evalMontecarloPar
     , liftMontecarlo
+
+ -- * Monoid
+    , Average
+    , average
+    , getAverage
     ) where
 
-import Data.Random.Normal
 import Control.Parallel.Strategies
 import System.Random
 import Control.Monad.State
-import Control.Monad
-import Data.Monoid
-
-montecarlo' :: Double -> Double -> Double ->
-               Double -> (Double -> Double) -> Int -> Int -> Double
-montecarlo' s rate vol time_to_expiry payoff n seed =
-  sum payoffs / realToFrac n
-  where payoffs = map f (take n (mkNormals seed))
-        periodic_mean = (rate - 0.5 * vol ** 2) * time_to_expiry
-        periodic_std_dv = vol * sqrt time_to_expiry
-        f z = payoff s_cur
-            where s_cur = s * exp (z * periodic_std_dv + periodic_mean)
-
-
-montecarlo :: Double -> Double -> Double ->
-              Double -> (Double -> Double) -> Int -> Double
-montecarlo s rate vol time_to_expiry payoff n = do
-  let chunkSize = 1000
-      chunksCount = n `div` chunkSize
-      seeds = take chunksCount [1..]
-      payoffs = map (montecarlo' s rate vol time_to_expiry payoff chunkSize)
-                seeds `using` parList rdeepseq
-  sum payoffs / realToFrac chunksCount
-
-{--
-toto :: Double
-toto = fst $ normal (mkStdGen 42)
-
-foo :: State StdGen Double
-foo = do
-  g <- get
-  state $ random
---}
 
 type Montecarlo g a = State g a
 
@@ -58,4 +29,18 @@ evalMontecarloPar n c mc g = mconcat mcs
 
 liftMontecarlo :: RandomGen g => (g -> (a, g)) -> Montecarlo g a
 liftMontecarlo = state
+
+
+data Average a = Average !Int !a
+
+instance Num a => Monoid (Average a) where
+    mempty = Average 0 0
+    Average n a `mappend` Average m b = Average (n + m) (a + b)
+
+average :: Fractional a => a -> Average a
+average = Average 1
+
+getAverage :: Fractional a => Average a -> a
+getAverage (Average n a) = a / fromIntegral n
+
 
