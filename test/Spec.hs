@@ -21,5 +21,5 @@ evalPi = 4 * fromIntegral (length (filter (<=1) xs)) / fromIntegral (length xs)
 unitTests :: TestTree
 unitTests = testGroup "Unit tests" [
              testCase "montecarlo: pi computation" $
-             assertBool "" (abs (evalPi - pi) < 0.00001)
+             assertBool "" (abs (evalPi - pi) < 0.01)
             ]
