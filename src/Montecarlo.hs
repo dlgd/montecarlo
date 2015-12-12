@@ -12,9 +12,10 @@ module Montecarlo
     , getAverage
     ) where
 
-import Control.Parallel.Strategies
-import System.Random
 import Control.Monad.State
+import Control.Parallel.Strategies
+import Data.Monoid ()
+import System.Random
 
 type Montecarlo g a = State g a
 
