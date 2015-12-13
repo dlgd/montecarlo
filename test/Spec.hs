@@ -1,7 +1,8 @@
-import Test.Tasty
-import Test.Tasty.HUnit
+import Control.Applicative
 import Montecarlo
 import System.Random
+import Test.Tasty
+import Test.Tasty.HUnit
 
 main :: IO ()
 main = defaultMain tests

@@ -12,19 +12,20 @@ module Montecarlo
     , getAverage
     ) where
 
-import Control.Monad.State
-import Control.Parallel.Strategies
-import Data.Monoid ()
-import System.Random
+import Control.Monad (replicateM)
+import Control.Monad.State (State, evalState, state)
+import Control.Parallel.Strategies (using, parList, rseq)
+import qualified Data.Monoid as M (Monoid(..), mconcat)
+import System.Random (RandomGen, next)
 
 type Montecarlo g a = State g a
 
-evalMontecarlo :: (RandomGen g, Monoid a) => Int -> Montecarlo g a -> g -> a
-evalMontecarlo n mc g = mconcat $ evalState (replicateM n mc) g
+evalMontecarlo :: (RandomGen g, M.Monoid a) => Int -> Montecarlo g a -> g -> a
+evalMontecarlo n mc g = M.mconcat $ evalState (replicateM n mc) g
 
-evalMontecarloPar :: (RandomGen g, Monoid a) => Int -> Int -> Montecarlo g a ->
+evalMontecarloPar :: (RandomGen g, M.Monoid a) => Int -> Int -> Montecarlo g a ->
                      g -> a
-evalMontecarloPar n c mc g = mconcat mcs
+evalMontecarloPar n c mc g = M.mconcat mcs
     where gs = take n (map snd (iterate (next . snd) (0, g)))
           mcs = map (evalMontecarlo c mc) gs `using` parList rseq
 
@@ -34,7 +35,7 @@ liftMontecarlo = state
 
 data Average a = Average !Int !a
 
-instance Num a => Monoid (Average a) where
+instance Num a => M.Monoid (Average a) where
     mempty = Average 0 0
     Average n a `mappend` Average m b = Average (n + m) (a + b)
 
