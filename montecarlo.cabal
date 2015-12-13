@@ -3,10 +3,13 @@ version:             0.1.0.0
 homepage:            http://github.com/dlgd/montecarlo
 license:             BSD3
 author:              dlgd
-category:            Web
+category:            Control
 build-type:          Simple
 -- extra-source-files:
 cabal-version:       >=1.10
+extra-source-files:
+                   README.md
+
 
 library
   hs-source-dirs:      src
