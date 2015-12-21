@@ -12,15 +12,26 @@ tests = testGroup "Tests" [unitTests]
 
 mcPi :: Montecarlo StdGen [Double]
 mcPi =  dist <$> mkValue <*> mkValue
-    where mkValue = liftMontecarlo $ randomR (0, 1)
+    where mkValue = montecarlo $ randomR (0, 1)
           dist x y = [sqrt $ x**2 + y**2]
 
+calcPi :: [Double] -> Double
+calcPi xs = 4 * fromIntegral (length (filter (<= 1) xs))
+             / fromIntegral (length xs)
+
 evalPi :: Double
-evalPi = 4 * fromIntegral (length (filter (<=1) xs)) / fromIntegral (length xs)
-    where xs = evalMontecarlo 100000 mcPi (mkStdGen 42)
+evalPi = calcPi $ evalMontecarlo 100000 mcPi (mkStdGen 42)
+
+evalPiPar :: Double
+evalPiPar = calcPi $ evalMontecarloPar 100 1000 mcPi (mkStdGen 42)
+
+testEq :: Double -> Double -> Bool
+testEq x y = abs (x - y) < 0.1
 
 unitTests :: TestTree
 unitTests = testGroup "Unit tests" [
              testCase "montecarlo: pi computation" $
-             assertBool "" (abs (evalPi - pi) < 0.01)
+             assertBool "" $ testEq evalPi pi
+           , testCase "montecarlo: pi parallel computation" $
+             assertBool "" $ testEq evalPiPar pi
             ]

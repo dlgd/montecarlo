@@ -5,7 +5,6 @@ license:             BSD3
 author:              dlgd
 category:            Control
 build-type:          Simple
--- extra-source-files:
 cabal-version:       >=1.10
 extra-source-files:
                    README.md
@@ -14,25 +13,13 @@ extra-source-files:
 library
   hs-source-dirs:      src
   exposed-modules:     Montecarlo
-                     , Pricing
-  ghc-options:         -Wall -O2 -fwarn-tabs -eventlog
+  ghc-options:         -Wall -fwarn-tabs
   build-depends:       base >= 4.7 && < 5
-                     , normaldistribution
                      , parallel
                      , random
                      , mtl
   default-language:    Haskell2010
 
-executable montecarlo-exe
-  hs-source-dirs:      app
-  main-is:             Main.hs
-  ghc-options:         -threaded -rtsopts -eventlog
-  build-depends:       base
-                     , montecarlo
-                     , random
-
--- rm ramdom
-  default-language:    Haskell2010
 
 test-suite montecarlo-test
   type:                exitcode-stdio-1.0
