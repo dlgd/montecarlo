@@ -36,21 +36,18 @@ API
 A `Montecarlo` computation is created by calling the `montecarlo` function:
 
 ```haskell
-ghci> :t montecarlo
 montecarlo :: RandomGen g => (g -> (a, g)) -> Montecarlo g a
 ```
 
 It can be evaluated sequentially by `evalMontecarlo`:
 
 ```haskell
-ghci> :t evalMontecarlo
 evalMontecarlo :: (Monoid a, RandomGen g) => Int -> Montecarlo g a -> g -> a
 ```
 
 Or in parallel by `evalMontecarloPar`:
 
 ```haskell
-> :t evalMontecarloPar
 evalMontecarloPar :: (Monoid a, RandomGen g) =>
                       Int -> Int -> Montecarlo g a -> g -> a
 ```
